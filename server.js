@@ -34,7 +34,7 @@ app.post("/criar-pagamento", async (req, res) => {
       {
         customer: cliente.data.id,
         billingType: "PIX",
-        value: 5.00,
+        value: 19.99,
         dueDate: new Date().toISOString().split("T")[0]
       },
       {
