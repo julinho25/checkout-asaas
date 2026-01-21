@@ -2,26 +2,103 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Pagamento - Asaas</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Checkout</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #7f00ff, #e100ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .card {
+      background: #fff;
+      padding: 30px;
+      width: 360px;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.2);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #7f00ff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background: #6600cc;
+    }
+    .price {
+      font-size: 26px;
+      color: #7f00ff;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    #resultado {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="card">
-    <h1>Pagamento</h1>
-    <p class="price">R$ 49,90</p>
+<div class="card">
+  <h2>Pagamento</h2>
+  <p class="price">R$ 49,90</p>
 
-    <input type="text" id="nome" placeholder="Nome completo">
-    <input type="email" id="email" placeholder="E-mail">
-    <input type="text" id="cpf" placeholder="CPF">
+  <input id="nome" placeholder="Nome completo">
+  <input id="email" placeholder="E-mail">
+  <input id="cpf" placeholder="CPF">
 
-    <button onclick="pagar()">Pagar agora</button>
+  <select id="metodo">
+    <option value="PIX">PIX</option>
+    <option value="CREDIT_CARD">Cartão de crédito</option>
+    <option value="BOLETO">Boleto</option>
+  </select>
 
-    <div id="resultado"></div>
-  </div>
+  <button onclick="pagar()">Pagar agora</button>
+  <div id="resultado"></div>
 </div>
 
-<script src="script.js"></script>
+<script>
+async function pagar() {
+  const nome = nomeInput.value;
+  const email = emailInput.value;
+  const cpf = cpfInput.value;
+  const metodo = metodoInput.value;
+
+  const res = await fetch(
+    "https://checkout-asaas.onrender.com/criar-pagamento",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, email, cpf, metodo })
+    }
+  );
+
+  const data = await res.json();
+
+  if (data.invoiceUrl) {
+    window.location.href = data.invoiceUrl;
+  } else {
+    resultado.innerText = data.message || "Erro no pagamento";
+  }
+}
+
+const nomeInput = document.getElementById("nome");
+const emailInput = document.getElementById("email");
+const cpfInput = document.getElementById("cpf");
+const metodoInput = document.getElementById("metodo");
+const resultado = document.getElementById("resultado");
+</script>
+
 </body>
 </html>
